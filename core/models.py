@@ -10,8 +10,13 @@ class Project(models.Model):
    def __str__(self):
       return self.project_name
 
-   def was_published_recently(self):
-      return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+   def cleanup(self):
+       timeentries = self.timeentry_set.all()
+       for timeentry in timeentries:
+           if timeentry.delta_minutes < 1:
+               timeentry.delete()
+
+
 
 class TimeEntry(models.Model):
     #TODO: Remove all timeentries with delta smaller than 1 min

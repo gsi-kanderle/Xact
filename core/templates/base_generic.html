@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 {% load static %}
-
 <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 <html lang="en">
 <head>
-  { % load static % }
-  {% load staticfiles %}
+  {% load static %}
     <script src="{% static "js/jquery-1.11.1.js" %}"></script>
+  {% load static %}
     <script src="{% static "js/rango-jquery.js" %}"></script>
   {% block title %}<title>Xact</title>{% endblock %}
   <meta charset="utf-8">
@@ -23,8 +22,6 @@
       {% block sidebar %}
         <ul class="sidebar-nav">
           <li><a href="{% url 'core:index' %}">Home</a></li>
-          <li><a href="">All books</a></li>
-          <li><a href="">All authors</a></li>
         </ul>
      {% endblock %}
       </div>

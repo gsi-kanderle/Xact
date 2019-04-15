@@ -13,6 +13,30 @@ def create_detail_context(project):
         }
     return context
 
+def stop_project_timing(project):
+    active_id = project.active_timeentry_id
+    if active_id == 0:
+        return False
+    t = get_object_or_404(TimeEntry, pk=active_id)
+    t.stop_time = timezone.now()
+    t.calculate_Delta_Time()
+    if t.delta_minutes < 1:
+        t.delete()
+    else:
+        t.save()
+    project.active_timeentry_id = 0
+    project.save()
+    return True
+
+def stop_active_projects(current_project):
+    projects = Project.objects.all()
+    for p in projects:
+        if p.id == current_project.id:
+            continue
+        if not stop_project_timing(p):
+            continue
+
+
 def index(request):
     latest_project_list = Project.objects.order_by('-pub_date')[:5]
     context = {
@@ -34,20 +58,14 @@ def starttiming(request, project_id):
     t.save()
     p.active_timeentry_id = t.id
     p.save()
+    stop_active_projects(p)
     context = create_detail_context(p)
     return render(request, 'detail.html', context = context)
 
 def stoptiming(request, project_id):
     p = get_object_or_404(Project, pk=project_id)
-    active_id = p.active_timeentry_id
-    if active_id < 1:
+    if not stop_project_timing(p):
         return HttpResponse("Error, no active id: " + str(active_id))
-    t = get_object_or_404(TimeEntry, pk=active_id)
-    t.stop_time = timezone.now()
-    t.calculate_Delta_Time()
-    t.save()
-    p.active_timeentry_id = 0
-    p.save()
     context = create_detail_context(p)
     return render(request, 'detail.html', context = context)
 
