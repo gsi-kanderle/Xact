@@ -6,7 +6,7 @@ from django.utils import timezone
 class Project(models.Model):
    project_name = models.CharField(max_length=200)
    pub_date = models.DateTimeField('date created')
-
+   active_timeentry_id = models.IntegerField(default=0)
    def __str__(self):
       return self.project_name
 
@@ -14,17 +14,17 @@ class Project(models.Model):
       return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
 class TimeEntry(models.Model):
+    #TODO: Remove all timeentries with delta smaller than 1 min
    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-   start_time = models.DateTimeField()
-   stop_time = models.DateTimeField()
-   delta_time = models.DateTimeField()
+   start_time = models.DateTimeField(default=timezone.now())
+   stop_time = models.DateTimeField(default=timezone.now())
+   delta_minutes = models.IntegerField(default=0) # delta time in minutes
 
    def __str__(self):
-      return self.start_time
+      return str(self.start_time)
 
    def calculate_Delta_Time(self):
-       if self.stop_time == self.start_time:
-           self.delta_time = None
-       if self.stop_time < self.start_time:
-           self.delta_time = None
-       self.delta_time = self.stop_time.timedelta(self.start_time)
+       if self.stop_time <= self.start_time:
+           self.delta_minutes = 0
+       delta_time = self.stop_time - self.start_time
+       self.delta_minutes = delta_time.seconds//60

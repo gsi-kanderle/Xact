@@ -4,6 +4,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 <html lang="en">
 <head>
+  { % load static % }
+  {% load staticfiles %}
+    <script src="{% static "js/jquery-1.11.1.js" %}"></script>
+    <script src="{% static "js/rango-jquery.js" %}"></script>
   {% block title %}<title>Xact</title>{% endblock %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
