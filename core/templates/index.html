@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>List of projects:</h1>
+    {% if latest_project_list %}
+      <ul>
+        {% for project in latest_project_list %}
+          <li><a href="/core/{{ project.id }}/">{{ project.project_name }}</a></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+          <p>No projects are available.</p>
+        {% endif %}
+  <h1>Create new project</h1>
+    <form action="{% url 'core:createProject' %}" method="post">
+      {% csrf_token %}
+      First name:<br>
+      <input type="text" name="Project Name" value="Test">
+      <br><br>
+      <input type="submit" value="Create">
+    </form>
+{% endblock %}

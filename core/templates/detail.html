@@ -1,0 +1,28 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>{{ project.project_name }}</h1>
+{% if stop %}
+<h1> ON HOLD </h1>
+<form action="/core/{{ project.id }}/timing/" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Start timing">
+</form>
+{% else %}
+<h1> CURRENTLY TIMING </h1>
+<form action="/core/{{ project.id }}/{{ timeentry.id }}/stoptiming/" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Stop timing">
+</form>
+{% endif %}
+      <ul>
+        {% if latest_project_list %}
+          <ul>
+            {% for timeentry in latest_timeentries %}
+              <li>{{ timeentry.start_time }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+              <p>No time entries for this project.</p>
+        {% endif %}
+{% endblock %}
